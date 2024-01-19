@@ -1,3 +1,6 @@
+
+
+
 epi_data <- read.csv("./2010EPI_data.csv", skip=1)
 df2 <- read.csv("./GPW3_GRUMP_SummaryInformation_2010.csv")
 
@@ -8,14 +11,10 @@ df2 <- read.csv("./GPW3_GRUMP_SummaryInformation_2010.csv")
 
 attach(epi_data)
 
-fix(epi_data)
-epi_data$EPI
+# fix(epi_data) # simple df editor
 
 epi <- epi_data$EPI
-
-
 tf <- is.na(epi)
-
 epi_cleaned <- epi[!tf]
 
 summary(epi)
@@ -66,29 +65,34 @@ qqline(daly_cleaned)
 
 water_h <- epi_data$WATER_H
 tf <- is.na(water_h)
-water_h_cleaned <- daly[!tf]
+water_h_cleaned <- water_h[!tf]
 
-summary(water_h_cleaned)
-
-fivenum(water_h_cleaned)
 stem(water_h_cleaned)
-hist(water_h_cleaned)
-hist(water_h_cleaned, seq(0, 100, 5.0), prob=T)
-lines(density(water_h_cleaned,bw="SJ"))
+hist(water_h_cleaned, seq(0., 100., 5.0), prob=T)
+lines(density(water_h_cleaned, bw="sj"))
 rug(water_h_cleaned)
 
+plot(ecdf(water_h))
 plot(ecdf(water_h), do.points=F, verticals=T)
 par(pty="s")
 qqnorm(water_h_cleaned)
 qqline(water_h_cleaned)
 
 
-boxplot(epi, daly)
-# boxplot(epi_cleaned, daly_cleaned) # the same as above
-
-qqplot(epi, daly)
 
 
-epi_data$Landlock
 
-epi_land = epi_cleaned[!Landlock]
+read_excel_allsheets <- function(filename, tibble = FALSE) {
+  # I prefer straight data.frames
+  # but if you like tidyverse tibbles (the default with read_excel)
+  # then just pass tibble = TRUE
+  sheets <- readxl::excel_sheets(filename)
+  x <- lapply(sheets, function(X) readxl::read_excel(filename, sheet = X))
+  if(!tibble) x <- lapply(x, as.data.frame)
+  names(x) <- sheets
+  x
+}
+
+mysheets <- read_excel_allsheets("./2010EPI_data.xls")
+
+View(mysheets$`EPI2010_all countries`)
