@@ -113,7 +113,7 @@ df
 set.seed(101)
 help(kmeans)
 irisClusters <- kmeans(df, 3, iter.max = 1000)
-
+library(cluster)
 clusplot(iris,irisClusters$cluster, color = TRUE, shade = TRUE, labels = 0, lines = 0)
 par(pty="m")
 table(iris[,5], irisClusters$cluster)
