@@ -32,8 +32,7 @@ plot(colMeans(data_Matrix_Ordered), xlab="Column", ylab="Column Mean", pch=19)
 # =============================  Exercise 2  ===========================================
 # ======================================================================================
 # dev.off()
-
-
+par(mfrow=c(1,1))
 # library(dplyr)
 # library(ggplot2)
 library(tidyverse) #ggplot and dplyr
@@ -122,6 +121,9 @@ table(iris[,5], irisClusters$cluster)
 # ======================================================================================
 # ===============================  Titanic  ============================================
 # ======================================================================================
+par(pty="s")
+detach(abalone)
+
 library(titanic)
 library(tidyverse)
 head(titanic_train)
@@ -135,3 +137,69 @@ help(hclust)
 
 any(is.na(titanic_train))
 titanic <- na.omit(titanic) # remove columns with na values
+
+
+# rpart, ctree, hclust, for:
+# Survived ~ .
+
+# rpart
+library(rpart)
+library(rpart.plot)
+
+decisionTreeModel <- rpart(Survived~., titanic)
+decisionTreeModel
+rpart.plot(decisionTreeModel)
+attach(titanic)
+
+titanic_train <- rpart(Survived ~Pclass + Sex + Age + SibSp + Parch +Fare + Embarked, data = titanic, method = "class")
+plot(titanic_train)
+text(titanic_train)
+
+detach(titanic)
+
+# ctree
+# library(partykit)
+library(party)
+# titanic$Survived <- as.factor(Survived)
+# treeTitanic <- ctree(Survived ~ ., data=titanic)
+
+# Convert all character columns to factors
+
+titanic[] <- lapply(titanic, function(x) {
+  if (is.character(x)) factor(x) else x
+})
+# convert survived to factor
+# titanic$Survived <- as.factor(titanic$Survived)
+
+# Now run the ctree function
+treeTitanic <- ctree(Survived ~ ., data=titanic, controls=ctree_control(minbucket = 30, maxdepth=3))
+plot(treeTitanic)
+
+
+help(ctree)
+
+
+# library(partykit)
+# arbre <- partykit::ctree(Survived~., data=titanic, control=partykit::ctree_control(minbucket=30, maxsurrogate=Inf, maxdepth=3))
+#
+# plot(abre)
+
+
+
+
+help(hclust)
+
+# Filter the dataset to include only survivors
+titanic_survivors <- titanic[titanic$Survived == 1,]
+
+# Select numeric columns
+titanic_survivors_numeric <- titanic_survivors[, sapply(titanic_survivors, is.numeric)]
+
+# Compute distance matrix
+dist_matrix <- dist(titanic_survivors_numeric)
+
+# Perform hierarchical clustering
+titanic_survivors_hclust <- hclust(dist_matrix)
+
+# Plot dendrogram
+plot(titanic_survivors_hclust)
