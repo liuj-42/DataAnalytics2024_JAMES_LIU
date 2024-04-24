@@ -93,8 +93,8 @@ def add_info(mois_df, temp_df):
             mois_df = mois_df.apply(get_soil_moisture_, args=(date, info), axis=1)
             # temp_df = temp_df.apply(get_soil_temperature_, args=(date, info), axis=1)
     
-    mois_df.to_csv("./outbreak_data_plus_moisture.csv", index=False)
-    # temp_df.to_csv("./outbreak_data_plus_temperature.csv", index=False)
+    mois_df.to_csv("./moisture_data.csv", index=False)
+    # temp_df.to_csv("./temperature_data.csv", index=False)
 
 if __name__ == "__main__":
     # convert_netcdf_to_csv()
